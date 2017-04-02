@@ -12,13 +12,18 @@ const path = require('path')
 request(config.URL, (err, head, body) => {
   let $ = cheerio.load(body)
   let sections = []
-  let dist_path = path.normalize('./' + config.DIST);
+  let dist_path = path.normalize('./' + config.DIST)
+  let split_path = dist_path.split(path.sep)
 
   $('#primary>ul>li').each((i, section) => {
     sections.push(parse_century($, section))
   })
 
-  if( ! fs.existsSync(dist_path)) fs.mkdirSync(dist_path)
+  for(let i = 1; i <= split_path.length; i++) {
+    let chunk = split_path.slice(0, i).join(path.sep)
+
+    if( ! fs.existsSync(chunk)) fs.mkdirSync(chunk)
+  }
 
   async.forEach(sections, section_to_files)
 })
