@@ -8,16 +8,25 @@ const fs = require('fs')
 const path = require('path')
 
 function section_to_files(section) {
+  let dist_path = path.normalize(`./${config.DIST}/${section.title}`)
+
+  fs.stat(dist_path, (err, status) => {
+    if(
+      (err && err.code === 'ENOENT')
+      || ! status.isDirectory()
+    ) fs.mkdirSync(dist_path)
+  })
+
   async.forEach(section.links, (link) => {
     request(config.URL + link.href.slice(1), (err, head, body) => {
-      process_page(body, `${section.title} -- ${link.title}`, 'txt')
+      process_page(body, `${section.title}/${link.title}.txt`)
     })
   })
 }
 
 module.exports = section_to_files
 
-function process_page(body, filename, ext) {
+function process_page(body, file_path) {
   let $ = cheerio.load(body)
   let title = $('.entry-title').text()
   let article = title + '\n' + '-'.repeat(title.length) + '\n'
@@ -30,7 +39,7 @@ function process_page(body, filename, ext) {
     }
   })
 
-  let final_path = path.normalize(`./${config.DIST}/${filename}.${ext}`)
+  let final_path = path.normalize(`./${config.DIST}/${file_path}`)
 
-  fs.writeFile(final_path, article), (err) => {};
+  fs.writeFileSync(final_path, article);
 }

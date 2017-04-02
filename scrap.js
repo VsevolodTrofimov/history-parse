@@ -18,7 +18,7 @@ request(config.URL, (err, head, body) => {
     sections.push(parse_century($, section))
   })
 
-  if( ! fs.existsSync(dist_path)) fs.mkdir(dist_path)
+  if( ! fs.existsSync(dist_path)) fs.mkdirSync(dist_path)
 
   async.forEach(sections, section_to_files)
 })
