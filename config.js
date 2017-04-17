@@ -1,5 +1,5 @@
 const URL = 'http://historykratko.com/'
-const DIST = '/books-1'
+const DIST = '/books/lib'
 
 module.exports = {
   URL,
